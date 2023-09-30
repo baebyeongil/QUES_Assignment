@@ -5,12 +5,14 @@ const router = Router();
 
 const postController = new PostController();
 
-router.post("/createPost", postController.createPost);
+router.post("/post", postController.createPost);
 
-router.get("/getAllPost", postController.getAllPost);
+router.get("/posts", postController.getAllPost);
 
-router.get("/getOnePost/:id", postController.getOnePost);
+router.get("/posts/:id", postController.getOnePost);
 
-router.get("/getSearchPost", postController.getSearchPost);
+router.get("/searchPosts", postController.getSearchPost);
+
+router.delete("/posts/:id", postController.deletePost);
 
 export default router;

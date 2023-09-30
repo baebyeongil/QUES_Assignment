@@ -22,7 +22,6 @@ const Post = connector.sequelize.define(
     createdAt: {
       type: DataTypes.DATE,
       allowNull: false,
-      defaultValue: DataTypes.NOW,
     },
   },
   { timestamps: false }

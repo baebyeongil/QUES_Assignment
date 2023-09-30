@@ -2,12 +2,16 @@ import Post from "../db/models/post";
 import { Op } from "sequelize";
 
 export default class PostRepository {
-  createPost = async (title, content) => {
-    return await Post.create({ title, content });
+  createPost = async (title, content, createdAt) => {
+    return await Post.create({ title, content, createdAt });
   };
 
   getAllPost = async () => {
     return await Post.findAll();
+  };
+
+  getOnePost = async (id) => {
+    return await Post.findOne({ where: { id } });
   };
 
   getTitleSearch = async (content) => {
@@ -20,5 +24,19 @@ export default class PostRepository {
     return await Post.findAll({
       where: { content: { [Op.like]: `%${content}%` } },
     });
+  };
+
+  getDateSearch = async (startDate, endDate) => {
+    return await Post.findAll({
+      where: {
+        createdAt: {
+          [Op.between]: [startDate, endDate],
+        },
+      },
+    });
+  };
+
+  deletePost = async (id) => {
+    return await Post.destroy({ where: { id } });
   };
 }

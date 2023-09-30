@@ -33,4 +33,12 @@ export default class PostController {
 
     return res.status(status).json(message);
   };
+
+  deletePost = async (req, res) => {
+    const { id } = req.params;
+
+    const { status, message } = await this.postService.deletePost(id);
+
+    return res.status(status).json(message);
+  };
 }
