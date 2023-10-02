@@ -13,9 +13,7 @@ export class App {
   runServer = async () => {
     try {
       this.app.listen(process.env.PORT, function () {
-        console.log("✨".repeat(17));
         console.log(`✨✨ Server Run,  Port : ${process.env.PORT} ✨✨`);
-        console.log("✨".repeat(17));
       });
     } catch (error) {
       console.log("Server run error: ", error.message);

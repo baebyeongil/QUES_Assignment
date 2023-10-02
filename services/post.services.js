@@ -16,9 +16,9 @@ export default class PostService {
           message: "Cannot find content",
         };
       }
-      const offset = 1000 * 60 * 60 * 9;
-      const date = new Date(new Date().getTime() + offset);
-      const post = await this.postRepository.createPost(title, content, date);
+      const date = new Date();
+      const korDate = await this.korTimeTrans(date);
+      const post = await this.postRepository.createPost(title, content, korDate);
       if (!post) {
         return {
           status: 400,
@@ -177,7 +177,7 @@ export default class PostService {
 
   korTimeTrans = async (date) => {
     try {
-      const offset = 9 * 60 * 60 * 1000;
+      const offset = 1000 * 60 * 60 * 9;
       return new Date(date.getTime() + offset);
     } catch (err) {
       console.log(err);
