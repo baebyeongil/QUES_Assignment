@@ -14,7 +14,7 @@ class DBConnector {
 
   connectDB() {
     this.sequelize
-      .sync({ force: false })
+      .sync()
       .then(() => {
         console.log("✨✨ Datebase is Connected 👍 ✨✨");
       })
