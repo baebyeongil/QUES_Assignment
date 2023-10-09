@@ -16,9 +16,10 @@ export default class PostService {
           message: "Cannot find content",
         };
       }
-      const date = new Date();
-      const korDate = await this.korTimeTrans(date);
-      const post = await this.postRepository.createPost(title, content, korDate);
+      const offset = 1000 * 60 * 60 * 9;
+      let date = new Date();
+      date = new Date(date.getTime() + offset);
+      const post = await this.postRepository.createPost(title, content, date);
       if (!post) {
         return {
           status: 400,
@@ -134,11 +135,8 @@ export default class PostService {
             message: "Error Date",
           };
         }
-        start.setHours(0, 0, 0, 0);
         end.setHours(23, 59, 59, 999);
-        const startDate = await this.korTimeTrans(start);
-        const endDate = await this.korTimeTrans(end);
-        posts = await this.postRepository.getDateSearch(startDate, endDate);
+        posts = await this.postRepository.getDateSearch(start, end);
       }
       return {
         status: 200,
@@ -166,19 +164,6 @@ export default class PostService {
         status: 200,
         message: "Success Delete Post",
       };
-    } catch (err) {
-      console.log(err);
-      return {
-        status: 500,
-        message: "Server Error",
-      };
-    }
-  };
-
-  korTimeTrans = async (date) => {
-    try {
-      const offset = 1000 * 60 * 60 * 9;
-      return new Date(date.getTime() + offset);
     } catch (err) {
       console.log(err);
       return {
