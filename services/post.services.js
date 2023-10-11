@@ -105,39 +105,28 @@ export default class PostService {
       if (target === "content") {
         posts = await this.postRepository.getContentSearch(content);
       }
-      if (target === "date") {
-        if (!content.startDate && !content.endDate) {
-          return {
-            status: 400,
-            message: "Cannot find date",
-          };
-        }
-        const checkDateForm = /[0-9]{4}-(0?[1-9]|1[012])-(0?[1-9]|[12][0-9]|3[01])/;
-        if (!checkDateForm.test(content.startDate) || !checkDateForm.test(content.endDate)) {
-          return {
-            status: 400,
-            message: "Error DateForm",
-          };
-        }
-        if (content.startDate > content.endDate) {
-          return {
-            status: 400,
-            message: "Start date is greater than end date",
-          };
-        }
 
-        const start = new Date(content.startDate);
-        const end = new Date(content.endDate);
-
-        if (isNaN(start.getTime()) || isNaN(end.getTime())) {
-          return {
-            status: 400,
-            message: "Error Date",
-          };
-        }
-        end.setHours(23, 59, 59, 999);
-        posts = await this.postRepository.getDateSearch(start, end);
+      if (!content.startDate || !content.endDate) {
+        return {
+          status: 400,
+          message: "Cannot find date",
+        };
       }
+
+      const dateResult = await this.checkDate(content);
+      if (dateResult !== true) {
+        return {
+          status: 400,
+          message: "Error DateForm",
+        };
+      }
+
+      const start = new Date(content.startDate);
+      const end = new Date(content.endDate);
+      end.setHours(23, 59, 59, 999);
+
+      posts = await this.postRepository.getDateSearch(start, end);
+
       return {
         status: 200,
         message: posts,
@@ -164,6 +153,47 @@ export default class PostService {
         status: 200,
         message: "Success Delete Post",
       };
+    } catch (err) {
+      console.log(err);
+      return {
+        status: 500,
+        message: "Server Error",
+      };
+    }
+  };
+
+  checkDate = async (content) => {
+    try {
+      const keys = Object.values(content);
+      const checkDateForm = /[0-9]{4}-(0?[1-9]|1[012])-(0?[1-9]|[12][0-9]|3[01])$/;
+      for (const i of keys) {
+        if (!checkDateForm.test(i)) {
+          return false;
+        }
+        const date = i.split("-");
+        const y = Number(date[0]);
+        const m = Number(date[1]);
+        const d = Number(date[2]);
+
+        if (d === 31 && ![1, 3, 5, 7, 8, 10, 12].includes(m)) {
+          return false;
+        }
+        if (m === 2 && (d > 29 || (d === 29 && (y % 4 !== 0 || (y % 100 === 0 && y % 400 !== 0))))) {
+          return false;
+        }
+
+        const changeDate = new Date(date);
+        if (isNaN(changeDate.getTime())) {
+          return false;
+        }
+      }
+
+      const start = new Date(content.startDate);
+      const end = new Date(content.endDate);
+      if (start > end) {
+        return false;
+      }
+      return true;
     } catch (err) {
       console.log(err);
       return {

@@ -4,7 +4,6 @@ export default class PostController {
   postService = new PostService();
 
   createPost = async (req, res) => {
-    console.log(req.body);
     const { title, content } = req.body;
 
     const { status, message } = await this.postService.createPost(title, content);
